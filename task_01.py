@@ -15,7 +15,7 @@ class Vertex():
 
     @property
     def vertex(self):
-        return [self.dist, self.status, self.id, self.parent]
+        return [self.dist, self.id, self.parent]
 
     @property
     def dist(self):
@@ -24,6 +24,14 @@ class Vertex():
     @dist.setter
     def dist(self, value):
         self.dist = value
+
+    #@id.setter
+    #def id(self, value):
+    #    self.id = value
+
+    #@parent.setter
+    #def parent(self, value):
+    #    self.parent = value
 
     def __str__(self):
         return str(self.id) + "  " +  str(self.dist)
@@ -114,7 +122,7 @@ def remove_vertex(vertex):
 def pop_vertex():
     while heap:
         vertex = heapq.heappop(heap)
-        if vertex.status is not removed:
+        if vertex.id is not removed:
             del vertex_dict[vertex.id]
             return vertex
     return KeyError('pop from empty heap')
@@ -129,9 +137,13 @@ def dijkstra2(graph, s):
     while heap and fixer <= 10:
         fixer += 1
         u = pop_vertex()
-        for v in graph[u.id]:
-            working_vertex = vertex_dict[v]
-            if       
+        for edge in graph[u.id]:
+            if edge.end in vertex_dict:
+                working_vertex = vertex_dict[edge.end]
+                if working_vertex.dist > u.dist + edge.weight:
+                    working_vertex.dist = u.dist + edge.weight
+                    working_vertex.parent = u.id
+                    add_vertex(working_vertex)
 
 dijkstra2(graph, 1)
 
@@ -139,3 +151,7 @@ for h in heap:
     print h
     
 print vertex_dict
+
+print graph
+
+print 
