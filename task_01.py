@@ -6,9 +6,9 @@ import itertools
 
 class Vertex():
     
-    def __init__(self, id):
+    def __init__(self, id, dist = float('inf')):
         self.id = id
-        self.dist = float('inf')
+        self.dist = dist
         self.parent = None
         #self.status = 'Not Removed'
         #self.vertex = (self.dist, [self.id, self.parent])
@@ -107,25 +107,37 @@ def dijkstra(graph, s):
 
 #dijkstra(graph, 1)
 
-def add_vertex(vertex):
-    if vertex.id in vertex_dict:
+def add_vertex(vertex, vertex_id, new_dist):
+    print 'we would like to add vertex - with id -{}, dist - {} '.format(vertex_id, new_dist)
+    #node = vertex.id   
+    #dist = vertex.dist
+    if vertex_id in vertex_dict:
+        print 'if statement before remove', vertex 
         remove_vertex(vertex)
-    count = next(counter) 
-    vertex_dict[vertex.id] = vertex
-    heapq.heappush(heap, vertex)
+    count = next(counter)
+    new_vertex = Vertex(vertex_id, new_dist) 
+    new_entry = [new_vertex.dist, new_vertex]
+    print 'new entry', new_entry
+    vertex_dict[new_vertex.id] = new_entry
+    heapq.heappush(heap, new_entry)
+    print 'heap after add_vertex', heap
 
 def remove_vertex(vertex):
     entry = vertex_dict.pop(vertex.id)
-    entry.id = removed
+    entry[1].id = removed
     
 
 def pop_vertex():
     while heap:
-        vertex = heapq.heappop(heap)
+        vertex = heapq.heappop(heap)[1]
         if vertex.id is not removed:
             del vertex_dict[vertex.id]
             return vertex
     return KeyError('pop from empty heap')
+
+def dict_print(dct):
+    for i in dct:
+        print dct[i]
 
 def dijkstra2(graph, s):
     fixer = 0
@@ -133,25 +145,36 @@ def dijkstra2(graph, s):
         vertex = Vertex(ver)
         if ver == s:
             vertex.dist = 0
-        add_vertex(vertex)
+        add_vertex(vertex, ver, vertex.dist)
+    vertex_dict_2 = dict(vertex_dict)
+    dict_print(vertex_dict_2)
+
     while heap and fixer <= 10:
         fixer += 1
         u = pop_vertex()
+        print 'pulling vertex from the heap', u
+        print 
         for edge in graph[u.id]:
+            print 'edge that coming out of u', edge
             if edge.end in vertex_dict:
-                working_vertex = vertex_dict[edge.end]
+                print 'if {} in vertex_dict - yes'.format(edge.end)
+                working_vertex = vertex_dict[edge.end][1]
+                print 'then working vertex is ', working_vertex
                 if working_vertex.dist > u.dist + edge.weight:
                     working_vertex.dist = u.dist + edge.weight
                     working_vertex.parent = u.id
-                    add_vertex(working_vertex)
+                    print 'new working_vertex', working_vertex
+                    add_vertex(working_vertex, working_vertex.id, working_vertex.dist)
+        for h  in heap:
+            print h[0], "  ", h[1]
 
 dijkstra2(graph, 1)
 
 for h in heap:
     print h
     
-print vertex_dict
+#print vertex_dict
 
-print graph
+#print graph
 
-print 
+print vertex_dict_2
